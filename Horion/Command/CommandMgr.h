@@ -1,66 +1,28 @@
 #pragma once
 
-#include "../../Memory/GameData.h"
-#include "Commands/BindCommand.h"
-#include "Commands/BruhCommand.h"
-#include "Commands/CoordsCommand.h"
-#include "Commands/DamageCommand.h"
-#include "Commands/DupeCommand.h"
-#include "Commands/EjectCommand.h"
-#include "Commands/EnchantCommand.h"
-#include "Commands/FriendListCommand.h"
-#include "Commands/GameModeCommand.h"
-#include "Commands/GiveCommand.h"
-#include "Commands/HelpCommand.h"
-#include "Commands/HideCommand.h"
-#include "Commands/ICommand.h"
-#include "Commands/ModulesCommand.h"
-#include "Commands/PanicCommand.h"
-#include "Commands/PlayerTeleportCommand.h"
-#include "Commands/RelativeTeleportCommand.h"
-#include "Commands/SayCommand.h"
-#include "Commands/ServerCommand.h"
-#include "Commands/SpammerCommand.h"
-#include "Commands/TeleportCommand.h"
-#include "Commands/ToggleCommand.h"
-#include "Commands/TopCommand.h"
-#include "Commands/UnbindCommand.h"
-#include "Commands/setoffhandCommand.h"
-#include "Commands/CommandBlockExploitCommand.h"
-#include "Commands/ConfigCommand.h"
-#include "Commands/NameSpoofCommand.h"
-#include "Commands/SetPrefixCommand.h"
-#include "Commands/NbtCommand.h"
-#include "Commands/ExecuteCommand.h"
-#include "Commands/WaypointCommand.h"
-#include"Commands/XpCommand.h"
-#include "Commands/ScriptCommand.h"
-#include "Commands/PathCommand.h"
-
-#ifdef _DEBUG
-#include "Commands/TestCommand.h"
-#endif
-
-#include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "Commands/ICommand.h"
+#include "Commands/XpCommand.h"
+
+// ============================================================================
+// STRIPPED-DOWN CommandMgr FOR .xp COMMAND ONLY
+// ============================================================================
+// The only command registered is XpCommand. All other commands were removed.
+// ============================================================================
+
 class CommandMgr {
-private:
-	GameData* gameData;
-	std::vector<IMCCommand*> commandList;
-
 public:
-	CommandMgr(GameData* gm);
-	~CommandMgr();
+	static char getPrefix() { return '.'; }
 
-	char prefix = '.';
+	// Returns true when `message` matched a registered command (and was
+	// consumed). Returns false when it should be forwarded to the game's
+	// normal chat path.
+	static bool tryExecute(const std::string& message);
 
-	void initCommands();
-	void disable();
-	std::vector<IMCCommand*>* getCommandList();
-
-	void execute(char* message);
+	// Kept for parity with the old API, but implemented inline in terms of
+	// tryExecute so there is no static state to initialise.
+	static void initCommands() {}
 };
-
-extern CommandMgr* cmdMgr;
